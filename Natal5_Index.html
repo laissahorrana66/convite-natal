@@ -1,121 +1,97 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Convite de Natal 🎄</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(180deg, #b30000, #ffffff, #006400); /* vermelho, branco e verde */
-      background-attachment: fixed;
-      color: #333;
-      text-align: center;
-      padding: 20px;
-    }
-    h1 {
-      color: darkred;
-      font-size: 2.8em;
-      text-shadow: 2px 2px 6px #fff;
-      margin-bottom: 10px;
-    }
-    .convite {
-      border: 4px solid green;
-      border-radius: 20px;
-      padding: 25px;
-      background: rgba(255, 248, 240, 0.95);
-      max-width: 700px;
-      margin: auto;
-      box-shadow: 0 0 25px rgba(0,0,0,0.4);
-      animation: aparecer 1.5s ease;
-    }
-    @keyframes aparecer {
-      from {opacity: 0; transform: scale(0.9);}
-      to {opacity: 1; transform: scale(1);}
-    }
-    .boasvindas {
-      font-size: 1.8em;
-      color: green;
-      margin-bottom: 15px;
-      text-shadow: 1px 1px 3px #fff;
-    }
-    .aviso {
-      font-weight: bold;
-      color: darkred;
-      margin-bottom: 15px;
-      font-size: 1.2em;
-    }
-    .formulario {
-      margin-top: 20px;
-    }
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-    }
-    button {
-      background: darkgreen;
-      color: white;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: red;
-      transform: scale(1.05);
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      background: #e6ffe6;
-      margin: 5px;
-      padding: 10px;
-      border-radius: 8px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div class="convite">
-    <h1>🎄 Convite Especial de Natal 🎅</h1>
-    <p class="boasvindas">✨ Bem vindo a Andleide ✨</p>
-    <p class="aviso">⚠️ É obrigatório participar de no mínimo 1 a 2 brincadeiras!</p>
-    
-    <p>Você está convidado para nossa festa de Natal!<br>
-    Traga sua alegria e participe desse momento mágico ✨</p>
+import streamlit as st
+import pandas as pd
+import os
 
-    <div class="formulario">
-      <h2>Confirme sua presença:</h2>
-      <form id="formPresenca">
-        <input type="text" id="nome" placeholder="Seu nome" required>
-        <input type="text" id="item" placeholder="O que você vai levar" required>
-        <button type="submit">Confirmar</button>
-      </form>
-    </div>
+st.set_page_config(page_title="Convite de Natal 🎄", page_icon="🎄", layout="centered")
 
-    <h2>Lista de Convidados 🎁</h2>
-    <ul id="listaConvidados"></ul>
-  </div>
+# ---- ARQUIVO CSV PARA SALVAR AS RESPOSTAS ----
+CSV_PATH = "convidados.csv"
 
-  <script>
-    const form = document.getElementById('formPresenca');
-    const lista = document.getElementById('listaConvidados');
+# Se o arquivo não existir, cria
+if not os.path.exists(CSV_PATH):
+    df_init = pd.DataFrame(columns=["nome", "item", "amigo_doce"])
+    df_init.to_csv(CSV_PATH, index=False)
 
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
-      const nome = document.getElementById('nome').value;
-      const item = document.getElementById('item').value;
+# Função para salvar
+def salvar_resposta(nome, item, amigo_doce):
+    df = pd.read_csv(CSV_PATH)
+    df.loc[len(df)] = [nome, item, amigo_doce]
+    df.to_csv(CSV_PATH, index=False)
 
-      if(nome && item) {
-        const li = document.createElement('li');
-        li.textContent = `${nome} vai levar: ${item}`;
-        lista.appendChild(li);
+# ---- ESTILO NATALINO ----
+st.markdown("""
+<style>
+body {
+    background: linear-gradient(180deg, #b30000, #ffffff, #006400) !important;
+}
+div.block-container {
+    padding-top: 30px;
+}
+.convite {
+    background: rgba(255, 248, 240, 0.95);
+    padding: 25px;
+    border-radius: 20px;
+    border: 4px solid green;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+}
+.title {
+    color: darkred;
+    font-size: 2.6em;
+    text-shadow: 2px 2px 6px #fff;
+    text-align: center;
+}
+.boasvindas {
+    color: green;
+    font-size: 1.6em;
+    text-shadow: 1px 1px 3px #fff;
+    text-align: center;
+}
+.aviso {
+    color: darkred;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.1em;
+}
+</style>
+""", unsafe_allow_html=True)
 
-        form.reset();
-      }
-    });
-  </script>
-</body>
-</html>
+# ---- CONTEÚDO DO SITE ----
+st.markdown("<div class='convite'>", unsafe_allow_html=True)
+
+st.markdown("<h1 class='title'>🎄 Convite Especial de Natal 🎅</h1>", unsafe_allow_html=True)
+st.markdown("<p class='boasvindas'>✨ Bem vindo a Andleide ✨</p>", unsafe_allow_html=True)
+st.markdown("<p class='aviso'>⚠️ É obrigatório participar de no mínimo 1 a 2 brincadeiras!</p>", unsafe_allow_html=True)
+
+st.write("Você está convidado para nossa festa de Natal! 🎁✨")
+st.write("Preencha abaixo para confirmar sua presença:")
+
+# ---- FORMULÁRIO ----
+with st.form("form_presenca"):
+    nome = st.text_input("Seu nome")
+    item = st.text_input("O que você vai levar")
+    amigo_doce = st.selectbox("Vai participar do Amigo Doce?", ["Selecione", "Sim", "Não"])
+
+    enviar = st.form_submit_button("Confirmar")
+
+    if enviar:
+        if nome == "" or item == "" or amigo_doce == "Selecione":
+            st.error("Por favor, preencha todos os campos!")
+        else:
+            salvar_resposta(nome, item, amigo_doce)
+            st.success("Presença confirmada com sucesso! 🎄✨")
+
+st.markdown("</div>", unsafe_allow_html=True)
+
+# ---- LISTA DE CONVIDADOS ----
+st.markdown("## 🎁 Lista de Convidados")
+
+df = pd.read_csv(CSV_PATH)
+
+if len(df) == 0:
+    st.info("Ainda não há convidados confirmados.")
+else:
+    for i, row in df.iterrows():
+        if row["amigo_doce"] == "Sim":
+            st.write(f"**{row['nome']}** vai levar: **{row['item']}** + (Doce de chocolate obrigatório e R$10 para o Amigo Doce)")
+        else:
+            st.write(f"**{row['nome']}** vai levar: **{row['item']}**")
