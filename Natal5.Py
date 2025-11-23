@@ -4,21 +4,21 @@ import os
 
 st.set_page_config(page_title="Convite de Natal 🎄", page_icon="🎄", layout="centered")
 
-# ---- ARQUIVO CSV PARA SALVAR AS RESPOSTAS ----
+# -------------------- ARQUIVO CSV --------------------
 CSV_PATH = "convidados.csv"
 
-# Se o arquivo não existir, cria
+# Criar CSV caso não exista
 if not os.path.exists(CSV_PATH):
-    df_init = pd.DataFrame(columns=["nome", "item", "amigo_doce"])
-    df_init.to_csv(CSV_PATH, index=False)
+    pd.DataFrame(columns=["nome", "item", "amigo_doce"]).to_csv(CSV_PATH, index=False)
 
-# Função para salvar
+# Função para salvar respostas
 def salvar_resposta(nome, item, amigo_doce):
     df = pd.read_csv(CSV_PATH)
     df.loc[len(df)] = [nome, item, amigo_doce]
     df.to_csv(CSV_PATH, index=False)
 
-# ---- ESTILO NATALINO ----
+
+# -------------------- ESTILO --------------------
 st.markdown("""
 <style>
 body {
@@ -55,25 +55,26 @@ div.block-container {
 </style>
 """, unsafe_allow_html=True)
 
-# ---- CONTEÚDO DO SITE ----
+
+# -------------------- CONTEÚDO --------------------
 st.markdown("<div class='convite'>", unsafe_allow_html=True)
 
 st.markdown("<h1 class='title'>🎄 Convite Especial de Natal 🎅</h1>", unsafe_allow_html=True)
 st.markdown("<p class='boasvindas'>✨ Bem vindo a Andleide ✨</p>", unsafe_allow_html=True)
 st.markdown("<p class='aviso'>⚠️ É obrigatório participar de no mínimo 1 a 2 brincadeiras!</p>", unsafe_allow_html=True)
 
-st.write("Você está convidado para nossa festa de Natal! 🎁✨")
-st.write("Preencha abaixo para confirmar sua presença:")
+st.write("Você está convidado para nossa festa de Natal! ✨")
+st.write("Preencha o formulário para confirmar sua presença:")
 
-# ---- FORMULÁRIO ----
-with st.form("form_presenca"):
+# -------------------- FORMULÁRIO --------------------
+with st.form("formulario"):
     nome = st.text_input("Seu nome")
-    item = st.text_input("O que você vai levar")
+    item = st.text_input("O que você vai levar?")
     amigo_doce = st.selectbox("Vai participar do Amigo Doce?", ["Selecione", "Sim", "Não"])
 
-    enviar = st.form_submit_button("Confirmar")
+    enviado = st.form_submit_button("Confirmar")
 
-    if enviar:
+    if enviado:
         if nome == "" or item == "" or amigo_doce == "Selecione":
             st.error("Por favor, preencha todos os campos!")
         else:
@@ -82,16 +83,16 @@ with st.form("form_presenca"):
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-# ---- LISTA DE CONVIDADOS ----
+# -------------------- LISTA DE CONVIDADOS --------------------
 st.markdown("## 🎁 Lista de Convidados")
 
 df = pd.read_csv(CSV_PATH)
 
 if len(df) == 0:
-    st.info("Ainda não há convidados confirmados.")
+    st.info("Nenhum convidado confirmou presença ainda.")
 else:
-    for i, row in df.iterrows():
+    for index, row in df.iterrows():
         if row["amigo_doce"] == "Sim":
-            st.write(f"**{row['nome']}** vai levar: **{row['item']}** + (Doce de chocolate obrigatório e R$10 para o Amigo Doce)")
+            st.write(f"**{row['nome']}** vai levar: **{row['item']}** + (Doce obrigatório + R$10 para o Amigo Doce)")
         else:
             st.write(f"**{row['nome']}** vai levar: **{row['item']}**")
