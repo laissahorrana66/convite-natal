@@ -7,27 +7,22 @@ st.set_page_config(page_title="Convite de Natal 🎄", page_icon="🎄", layout=
 # -------------------- ARQUIVO CSV --------------------
 CSV_PATH = "convidados.csv"
 
-# Criar CSV caso não exista
 if not os.path.exists(CSV_PATH):
     pd.DataFrame(columns=["nome", "item", "amigo_doce"]).to_csv(CSV_PATH, index=False)
 
-# Função para salvar respostas
 def salvar_resposta(nome, item, amigo_doce):
     df = pd.read_csv(CSV_PATH)
     df.loc[len(df)] = [nome, item, amigo_doce]
     df.to_csv(CSV_PATH, index=False)
 
 
-# -------------------- ESTILO --------------------
+# -------------------- ESTILO CSS --------------------
 st.markdown("""
 <style>
 body {
     background: linear-gradient(180deg, #b30000, #ffffff, #006400) !important;
 }
-div.block-container {
-    padding-top: 30px;
-}
-.convite {
+.convite-box {
     background: rgba(255, 248, 240, 0.95);
     padding: 25px;
     border-radius: 20px;
@@ -56,8 +51,8 @@ div.block-container {
 """, unsafe_allow_html=True)
 
 
-# -------------------- CONTEÚDO --------------------
-st.markdown("<div class='convite'>", unsafe_allow_html=True)
+# -------------------- CAIXA DO CONVITE --------------------
+st.markdown("<div class='convite-box'>", unsafe_allow_html=True)
 
 st.markdown("<h1 class='title'>🎄 Convite Especial de Natal 🎅</h1>", unsafe_allow_html=True)
 st.markdown("<p class='boasvindas'>✨ Bem vindo a Andleide ✨</p>", unsafe_allow_html=True)
@@ -83,6 +78,7 @@ with st.form("formulario"):
 
 st.markdown("</div>", unsafe_allow_html=True)
 
+
 # -------------------- LISTA DE CONVIDADOS --------------------
 st.markdown("## 🎁 Lista de Convidados")
 
@@ -91,7 +87,7 @@ df = pd.read_csv(CSV_PATH)
 if len(df) == 0:
     st.info("Nenhum convidado confirmou presença ainda.")
 else:
-    for index, row in df.iterrows():
+    for i, row in df.iterrows():
         if row["amigo_doce"] == "Sim":
             st.write(f"**{row['nome']}** vai levar: **{row['item']}** + (Doce obrigatório + R$10 para o Amigo Doce)")
         else:
